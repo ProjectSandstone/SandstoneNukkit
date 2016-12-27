@@ -1,0 +1,4 @@
+rootProject.name = 'SandstoneNukkit'
+include 'SandstoneCommon'
+include ':SandstoneAPI'
+project(':SandstoneAPI').projectDir = new File('SandstoneCommon/SandstoneAPI/')

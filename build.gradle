@@ -1,0 +1,71 @@
+buildscript {
+    apply from: project(":SandstoneAPI").file('gradle/versions.gradle')
+
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
+        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:$license_version"
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
+    }
+}
+
+group 'com.github.projectsandstone'
+version '1.0-SNAPSHOT'
+
+apply from: project(":SandstoneAPI").file("gradle/sandstone.gradle")
+
+repositories {
+    flatDir {
+        dirs 'libs/'
+    }
+}
+
+dependencies {
+    compile project(':SandstoneCommon')
+    compile project(':SandstoneAPI')
+
+    compileOnly 'com.github.JonathanxD:TypeAliasGen:1.1.10'
+
+    compile name: 'nukkit-1.0-SNAPSHOT'
+}
+
+shadowJar {
+    dependencies {
+        include(project(":SandstoneCommon"))
+        include(project(":SandstoneAPI"))
+        include(dependency("com.google.inject:guice"))
+        include(dependency("javax.inject:javax.inject"))
+        include(dependency("aopalliance:aopalliance"))
+        include(dependency("com.google.guava:guava"))
+        include(dependency("com.flowpowered:flow-math"))
+        include(dependency("io.github.lukehutch:fast-classpath-scanner"))
+        include(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
+        include(dependency("org.jetbrains.kotlin:kotlin-runtime"))
+        include(dependency("com.github.JonathanxD:JwIUtils"))
+        include(dependency("com.github.JonathanxD:AdapterHelper"))
+        include(dependency("com.github.JonathanxD:CodeAPI"))
+        include(dependency("com.github.JonathanxD:CodeAPI-Conversions"))
+        include(dependency("com.github.JonathanxD:CodeProxy"))
+        include(dependency("org.ow2.asm:asm-all"))
+        include(dependency("com.github.zafarkhaja:java-semver"))
+    }
+}
+
+// This task will generate type alias for all Nukkit classes
+// Make sure to run licenseFormat task to add license header to file
+task genTypeAliases(type: JavaExec) {
+    classpath sourceSets.main.compileClasspath
+    main = "com.github.jonathanxd.typealiasgen.TypeAliasGenKt"
+    args "cn.nukkit", "com.github.projectsandstone.nukkit.util.alias", "~", "Nukkit", "~", "src/main/kotlin/com/github/projectsandstone/nukkit/util/alias/NukkitClasses.kt", "true"
+}
+
+dokka {
+    enabled = false
+}

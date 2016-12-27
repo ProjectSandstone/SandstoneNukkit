@@ -1,0 +1,3 @@
+[submodule "SandstoneCommon"]
+	path = SandstoneCommon
+	url = https://github.com/ProjectSandstone/SandstoneCommon.git
